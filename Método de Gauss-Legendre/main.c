@@ -1,61 +1,33 @@
 #include <stdio.h>
 #include <math.h>
 
-double an (int n);
-double bn (int n);
-double tn (int n);
-double pn (int n);
 
-double pi (int n); //Calcula o pi com n iterações
+double gauss_legendre(int n){
 
-double an (int n){
+	int i;
+	double a = 1.0, b = 1/sqrt(2), t = 0.25, p = 1.0;
+	double a_aux;
 
-	if (n == 0)
-		return 1;
+	for(i=0; i<n;i++){
 
-	return (an(n-1)+bn(n-1))/2;
+		a_aux = (a + b)/2.0; //an+1
+		b = sqrt(a*b); //bn+1
+		t = t-p*(a-a_aux)*(a-a_aux); //tn+1
+		p = 2.0*p; //pn+1
 
+		a = a_aux;
+	}
 
-}
-
-double bn (int n){
-
-	if (n == 0)
-		return (1/sqrt(2));
-
-	return sqrt(an(n-1)*bn(n-1));
+	return (a+b)*(a+b)/(4.0*t);
 
 }
 
-double tn(int n){
 
-	if(n == 0)
-		return 0.25;
-
-	return tn(n-1) - pn(n-1)*pow(an(n-1)-an(n),2);
-
-}
-
-double pn (int n){
-
-	if (n == 0)
-		return 1;
-
-	return 2*pn(n-1);
+int main(){
 
 
-}
-
-double pi (int n){
+	printf("%.6f\n", gauss_legendre(1000) );
 
 
-	return (pow(an(n+1)+bn(n+1),2))/(4*tn(n+1));
-
-}
-
-int main (){
-
-
-	printf("%.6f\n",pi(50) );
 	return 0;
 }
