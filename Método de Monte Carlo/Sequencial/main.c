@@ -2,39 +2,59 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <gmp.h>
 #include <math.h>
+#include <pthread.h>
 
 
-double monte_carlo(int n){
-	
+
+void monte_carlo(int n){
+
+	mpf_set_default_prec(256);
+
 	srand(time(NULL));
 
-	double pi, x, y;
+	mpf_t pi, x, y, s_aux;
 
-	int i, aux = 0;
+	mpf_init(s_aux);
+	mpf_init(x);
+	mpf_init(y);
+
+	int i, aux, r_aux;
 
 
-	for (i = 0; i<n; i++){
+	for(i = 0; i<n; i++){
 
-		x = ((double)rand()/(double)RAND_MAX); 
-		y = ((double)rand()/(double)RAND_MAX);
+		mpf_set_d(x,((double)rand()/(double)RAND_MAX));
+		mpf_set_d(y,((double)rand()/(double)RAND_MAX));
 
-		if((pow(x,2)+pow(y,2))<=1){
-			aux +=1; 
+		mpf_pow_ui(x, x, 2); //x^2
+		mpf_pow_ui(y, y, 2); //y^2
 
+		mpf_add(s_aux, x, y); // s_aux = x^2 + y^2
+
+		r_aux = mpf_cmp_d(s_aux,1); //if s_aux>1 "+" 
+		
+		if(r_aux<=0){ //if s_aux<=1
+			aux++;
 		}
-	}
-	
-	pi =  ((double)aux/(double)i)*4.0;
 
-	return pi;
+	}
+
+	mpf_init_set_d(pi, aux); // pi = aux
+	mpf_div_ui(pi, pi, i);    // pi = aux/i
+	mpf_mul_ui(pi, pi, 4.0); // pi = (aux/i) * 4.0
+
+	gmp_printf("%.6Ff\n", pi);
+
+
+
 
 
 }
 
-
 int main(){
 
-	printf("%.6f\n", monte_carlo(100000000));
+	monte_carlo(1000000000);
 	return 0;
 }

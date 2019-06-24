@@ -3,7 +3,8 @@
 #include <time.h>
 #include <gmp.h>
 
-
+void *pn (void *args){}
+void *an_bn(voi *)
 
 void gauss_legendre(int n){
 

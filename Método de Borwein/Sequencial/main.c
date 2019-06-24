@@ -1,7 +1,8 @@
 #include <stdio.h>
+#include <time.h>
 #include <gmp.h>
 
-
+//142654 ms.
 void borwein(int n){
 
 	mpf_set_default_prec(1000000);
@@ -51,30 +52,20 @@ void borwein(int n){
 
 
 }
-/*
-double borwein (int n){
-
-	double pi= 0;
-
-	int i;
-
-	for(i = 0; i<n; i++){
-
-		pi+=(pow(16,-i))*((4.0/(8.0*i+1.0)) - (2.0/(8.0*i+4.0)) - (1.0/(8.0*i+5.0)) - (1.0/(8.0*i+6.0))); 
-
-
-	}
-	
-	return pi;
-
-
-}
-*/
 
 
 int main(){
 
-	borwein(10);
+	clock_t Ticks[2];
+	
+	Ticks[0] = clock();
 
+	borwein(10000);
+
+	Ticks[1] = clock();
+
+	double Tempo = (Ticks[1]-Ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
+	
+	printf("%g ms.\n", Tempo);
 	return 0;
 }
