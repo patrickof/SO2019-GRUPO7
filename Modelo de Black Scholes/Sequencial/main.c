@@ -11,7 +11,7 @@ double mean(double v[], int tam){
 	for(int i = 0; i< tam; i++)
 		total+=v[i];
 
-	return (total/tam);
+	return (double)(total/tam);
 
 }
 
@@ -31,11 +31,11 @@ double stddev(double v[], int tam, double media){
 }
 
 
-double randomNumber(){
+double randomNumber(double a){
 
 	srand(time(NULL));
 
-	return ((double)rand()/(double)RAND_MAX);
+	return ((double)(rand()+a*0.08)/(double)RAND_MAX);
 }
 
 
@@ -48,13 +48,13 @@ double black_scholes(double S, double E, double r, double sigma, double T, doubl
 
 	for (int i = 0; i < M; i++){
 
-		expoente = (r - 0.5*pow(sigma,2))*T + sigma*sqrt(T)*randomNumber();
+		expoente = (r - 0.5*pow(sigma,2))*T + sigma*sqrt(T)*randomNumber(i);
 
-		result_exp = exp(expoente);
+		result_exp = (double)exp(expoente);
 
-		temp = S*result_exp;
+		temp = (double)S*result_exp;
 
-		trial[i] = exp((-1)*r*T)*fmax(temp-E,0);
+		trial[i] = (double)exp((-1)*r*T)*fmax(temp-E,0);
 
 	}
 
@@ -65,7 +65,7 @@ double black_scholes(double S, double E, double r, double sigma, double T, doubl
 	conf_w = 1.96*desvio/(double)sqrt(M);
 
 	conf_mn = media - conf_w;
-	conf_mn = media + conf_mx;
+	conf_mx = media + conf_w;
 
 
 	printf(" Minimo: %.2f e Maximo: %.2f\n", conf_mn, conf_mx );
@@ -80,9 +80,10 @@ double black_scholes(double S, double E, double r, double sigma, double T, doubl
 
 int main(){
 
+	srand(time(NULL));
 
 
-	black_scholes(100.0,110.0, 10.0, 1.0, 1.0, 100000);
+	black_scholes(100.0, 110.0, 10.0, 1.0, 1.0, 100000);
 
 	return 0;
 
