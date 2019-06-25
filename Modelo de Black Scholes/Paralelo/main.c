@@ -5,77 +5,48 @@
 #include <pthread.h>
 
 
-double intervalos[4][2];
+double *trial;
 
 double S, E, r, sigma, T, M;
-
-double mean(double v[], int tam){
-
-	double total = 0.0;
-
-	for(int i = 0; i< tam; i++)
-		total+=v[i];
-
-	return (double)(total/tam);
-
-}
-
-double stddev(double v[], int tam, double media){
-
-	double sum = 0.0 ;
-
-	for(int i = 0; i<tam; i++){
-
-		sum+= pow((v[i] - media),2);
-
-	}
-
-	return (double)sqrt(sum/tam);
-
-
-}
-
-
-double randomNumber(double a){
-
-	srand(time(NULL));
-
-	return ((double)(rand()+a*0.08)/(double)RAND_MAX);
-}
 
 
 void* black_scholes_aux(void *args){
 
+	srand(time(NULL));
+
+
 	int *n = (int*) args;
 
-	double temp, expoente, result_exp, media, desvio, conf_w, conf_mn, conf_mx;
+	int inicio = (*n)*M/4;
+
+	int fim = inicio + M/4;
+
+
+	double temp, expoente, max, result_exp;
 	
-	double trial[(int)M];
+
+	double randomNumber;
 
 
-	for (int i = 0; i < (M/4); i++){
 
-		expoente = (r - 0.5*pow(sigma,2))*T + sigma*sqrt(T)*randomNumber(i*(*n));
+	for (int i = inicio; i < fim; i++){
+
+		randomNumber = ((double)rand())/(double)RAND_MAX;
+
+		expoente = (r - 0.5*pow(sigma,2))*T + sigma*sqrt(T)*randomNumber;
 
 		result_exp = (double)exp(expoente);
 
 		temp = (double)S*result_exp;
 
-		trial[i] = (double)exp((-1)*r*T)*fmax(temp-E,0);
+		if(temp-E<0)
+			max = 0;
+		else
+			max = temp-E;
+
+		trial[i] = (double)exp((-1)*r*T)*max;
 
 	}
-
-	media = mean(trial, M);
-
-	desvio = stddev(trial, M,  media);
-
-	conf_w = 1.96*desvio/(double)sqrt(M);
-
-	conf_mn = media - conf_w;
-	conf_mx = media + conf_w;
-
-	intervalos[*n][0] = conf_mn;
-	intervalos[*n][1] = conf_mx;
 
 	pthread_exit(NULL);
 
@@ -83,18 +54,17 @@ void* black_scholes_aux(void *args){
 
  void black_scholes(){
 
- 	S = 100.0, E = 110.0, r = 10.0, sigma = 1.0, T = 1.0, M = 100;
+ 	//S = 100.0, E = 110.0, r = 10.0, sigma = 1.0, T = 1.0, M = 100000;
+	scanf("%lf %lf %lf %lf %lf %d", &S, &E, &r, &sigma, &T, &M );
+
+
+ 	trial = (double*)malloc(M*sizeof(double));
 
  	pthread_t threads[4];
 
  	int entradas[4] = {0, 1, 2, 3};
 
- 	double conf_mn_sum = 0;
- 	double conf_mx_sum = 0;
-
- 	double conf_mn_medio;
-	double conf_mx_medio;
-
+ 	double media, desvio, conf_w, conf_mn, conf_mx;
 
 
 
@@ -108,24 +78,53 @@ void* black_scholes_aux(void *args){
 		pthread_join(threads[i], NULL);
 
 
-	for(int i = 0; i<4; ){
-		conf_mn_sum+= intervalos[i][0];
-		conf_mx_sum+= intervalos[i][1];
+
+
+    /***** Média *****/
+	double total = 0.0;
+	for(int i = 0; i< (int)M; i++){
+		//printf("%.5d\n",trial[i]);
+		total+=trial[i];
 	}
+	media = (double)(total/M);
 
-	conf_mn_medio = conf_mn_sum/4.0;
-	conf_mx_medio = conf_mx_sum/4.0;
+	/***** Desvio Padrão *****/
+	double sum = 0.0;
+	for(int i = 0; i<(int) M; i++)
+		sum+= pow((trial[i] - media),2);
+	desvio = (double)sqrt(sum/M);
 
-	printf(" Minimo: %.2f e Maximo: %.2f\n", conf_mn_medio, conf_mx_medio);
+
+	conf_w = 1.96*desvio/(double)sqrt(M);
+
+	conf_mn = media - conf_w;
+	conf_mx = media + conf_w;
+
+	printf("S     %lf\n", S);
+    printf("E     %lf\n", E);
+    printf("r     %lf\n", r);
+    printf("sigma %lf\n", sigma);
+    printf("T     %lf\n", T);
+    printf("M     %d\n", M);
+
+
+	printf("Minimo: %lf e Maximo: %lf\n", conf_mn, conf_mx);
 
  }
 
 int main(){
 
-	srand(time(NULL));
+	clock_t Ticks[2];
 
+	Ticks[0] = clock();
 
 	black_scholes();
+
+	Ticks[1] = clock();
+
+	double Tempo = (Ticks[1]-Ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
+	
+	printf("%g ms.\n", Tempo);
 
 	return 0;
 

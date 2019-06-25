@@ -1,17 +1,46 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <pthread.h>
 #include <gmp.h>
 
-void *pn (void *args){}
-void *an_bn(voi *)
+
+mpf_t a, a_aux, b, b_aux, t, t_aux, p, pi;
+
+//Inicialização das variáveis
+
+
+void *bn (void *args){
+
+	mpf_mul(b, a, b); //b = a*b
+	mpf_sqrt(b, b); 
+
+	//gmp_printf("%.6Ff\n", b);
+
+
+	pthread_exit(NULL);
+
+}
+void *an(void *args){
+
+	mpf_add(a_aux, a, b); //aux_a = a+b
+	mpf_div_ui(a_aux, a_aux, 2); //aux_a = (a+b)/2
+
+	pthread_exit(NULL);
+}
+
+
+
+
 
 void gauss_legendre(int n){
 
-	mpf_set_default_prec(100000);
+	mpf_set_default_prec(10000);
 	int i;
 
-	mpf_t a, a_aux, b, b_aux, t, t_aux, p, pi;
+	pthread_t thread_a[n];
+	pthread_t thread_b[n];
+
 
 	//Inicialização das variáveis
 	mpf_init(a);
@@ -23,7 +52,6 @@ void gauss_legendre(int n){
 	mpf_init(p);
 	mpf_init(pi);
 
-
 	//Atribuindo óos valores iniciais
 	mpf_set_d(a, 1.0);
 	mpf_sqrt_ui(b_aux, 2);
@@ -34,12 +62,13 @@ void gauss_legendre(int n){
 	for(i=0; i<n; i++){
 
 		//an+1
-		mpf_add(a_aux, a, b); //aux_a = a+b
-		mpf_div_ui(a_aux, a_aux, 2); //aux_a = (a+b)/2
-
+		pthread_create(&(thread_a[i]), NULL, an, NULL);
 		//bn+1
-		mpf_mul(b, a, b); //b = a*b
-		mpf_sqrt(b, b); //b = (a*b)^1/2
+		pthread_create(&(thread_b[i]), NULL, bn, NULL);
+		
+		pthread_join(thread_a[i],NULL);
+		pthread_join(thread_b[i],NULL);
+
 
 		//tn+1
 		mpf_sub(t_aux, a, a_aux); // t_aux = a-a_aux;

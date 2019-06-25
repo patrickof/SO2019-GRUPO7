@@ -3,7 +3,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <time.h>
 #include <sys/time.h>
+#include "drand48.c"
 
 struct BoxMullerState
 {

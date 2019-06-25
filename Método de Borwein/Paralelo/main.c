@@ -4,12 +4,11 @@
 
 #define iteracoes 10000
 
-//85241 ms.
 
-mpf_t vector_pi[4]; // valor de pi
-
+mpf_t vector_pi[4]; // Guarda os 4 valores de pi
 
 
+/***** Thread que calcula o valor de pi *****/
 void *borwein_aux(void *args){
 
 	int *n = (int *) args;
@@ -80,7 +79,7 @@ void *borwein_aux(void *args){
 }
 
 
-
+/***** Função que cria as 4 threads *****/
 void borwein(int n){
 
 	int i;
@@ -94,9 +93,6 @@ void borwein(int n){
 	mpf_init(pi);
 
 
-
-
-	
 	pthread_create(&(threads[0]), NULL, borwein_aux, &entradas[0]);
 	pthread_create(&(threads[1]), NULL, borwein_aux, &entradas[1]);
 	pthread_create(&(threads[2]), NULL, borwein_aux, &entradas[2]);

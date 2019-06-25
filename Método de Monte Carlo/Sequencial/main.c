@@ -55,6 +55,19 @@ void monte_carlo(int n){
 
 int main(){
 
-	monte_carlo(1000000000);
+	clock_t Ticks[2];
+
+	Ticks[0] = clock();
+
+
+	monte_carlo(100000000);
+
+	Ticks[1] = clock();
+
+	double Tempo = (Ticks[1]-Ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
+	
+	printf("%g ms.\n", Tempo);
+
+
 	return 0;
 }

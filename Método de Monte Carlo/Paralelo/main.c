@@ -11,6 +11,7 @@
 mpf_t vector_pi[4];
 
 
+/***** Thread para calcular o valor de pi *****/
 void* monte_carlo_aux(void *args){
 
 	int *n = (int*)args;
@@ -49,21 +50,13 @@ void* monte_carlo_aux(void *args){
 
 	}
 
-	//printf("%d\n", i );
-
-	//gmp_printf("%.6Ff\n", vector_pi[*n]);
-
 
 	mpf_init_set(vector_pi[*n], aux); // pi = aux
 
 	mpf_div_ui(vector_pi[*n], vector_pi[*n], (double)i);    // pi = aux/i
 
-	//gmp_printf("%.6Ff\n", vector_pi[*n]);
-
 
 	mpf_mul_ui(vector_pi[*n], vector_pi[*n], 4.0); // pi = (aux/i) * 4.0
-
-	//gmp_printf("%.6Ff\n", vector_pi[*n]);
 
 
 	mpf_clear(s_aux);
@@ -118,11 +111,21 @@ void monte_carlo(){
 
 int main(){
 
+clock_t Ticks[2];
+
+	Ticks[0] = clock();
+
 	monte_carlo();
 
 	for (int i = 0; i<4; i++)
 		mpf_clear(vector_pi[i]);
 	
+	Ticks[1] = clock();
+
+	double Tempo = (Ticks[1]-Ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
+	
+	printf("%g ms.\n", Tempo);
+
 
 
 	return 0;
