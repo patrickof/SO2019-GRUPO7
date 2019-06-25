@@ -1,16 +1,15 @@
-//gcc main.c -o main -lm -lgmp
+//gcc main.c -o main -lgmp
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <gmp.h>
-#include <math.h>
-#include <pthread.h>
+
 
 
 
 void monte_carlo(int n){
 
-	mpf_set_default_prec(256);
+	mpf_set_default_prec(1000000);
 
 	srand(time(NULL));
 

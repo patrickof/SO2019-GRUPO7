@@ -1,8 +1,9 @@
+//gcc main.c -o main -lgmp
 #include <stdio.h>
 #include <time.h>
 #include <gmp.h>
 
-//142654 ms.
+
 void borwein(int n){
 
 	mpf_set_default_prec(1000000);

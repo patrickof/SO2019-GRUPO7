@@ -1,3 +1,4 @@
+//gcc main.c -o main -lgmp
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>

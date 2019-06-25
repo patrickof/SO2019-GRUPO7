@@ -1,3 +1,5 @@
+//gcc main.c -o main -lgmp -lpthread
+
 #include <stdio.h>
 #include <pthread.h>
 #include <gmp.h>

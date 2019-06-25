@@ -1,8 +1,11 @@
+//gcc main.c -o main -lgmp -lpthread
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <pthread.h>
 #include <gmp.h>
+
 
 
 mpf_t a, a_aux, b, b_aux, t, t_aux, p, pi;

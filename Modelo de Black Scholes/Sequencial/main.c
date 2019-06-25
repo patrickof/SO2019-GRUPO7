@@ -1,3 +1,4 @@
+//gcc main.c -o main -lm
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>

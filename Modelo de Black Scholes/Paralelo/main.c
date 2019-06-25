@@ -1,3 +1,4 @@
+////gcc main.c -o main -lm -lpthread
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
